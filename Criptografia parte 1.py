@@ -125,13 +125,13 @@ def funcao_principal():
         if novo_voto == "1":  # Se houver um novo votante
             voto_individual = voto()
             if voto_individual == '1':  # Registra voto para Tião
-                votos_tiao += 39
+                votos_tiao += 1
             if voto_individual == '2':  # Registra voto para Zé
-                votos_ze += 61
+                votos_ze += 1
             if voto_individual == '3':  # Registra voto branco
-                votos_branco += 11
+                votos_branco += 1
             if voto_individual!='1'and voto_individual!='2'and voto_individual!='3':
-                votos_nulo += 8
+                votos_nulo += 1
             votos_totais=votos_tiao+votos_ze+votos_branco+votos_nulo
 
         elif novo_voto == "2":  # Encerrar secção
