@@ -1,9 +1,9 @@
 import os
 
 # Função para a contagem de votos
-def resultado(tiao, ze, branco, nulo):
-    candidatos = ["Tião do gás", "Zé da feira", "Branco", "nulo"]
-    contagem = {candidatos[0]: tiao, candidatos[1]: ze, candidatos[2]: branco, candidatos[3]: nulo}
+def resultado(tiao, ze, branco, nulo, total):
+    candidatos = ["Tião do gás", "Zé da feira", "Branco", "Nulo", "Total"]
+    contagem = {candidatos[0]: tiao, candidatos[1]: ze, candidatos[2]: branco, candidatos[3]: nulo, candidatos[4]: total}
     return contagem
 
 # Função para confirmar voto assim como o BOTÃO VERDE na urna
@@ -68,7 +68,7 @@ def criptografar_votos(resultados, chave):
     votos_criptografados = ""
     # Converte os resultados dos votos em uma string
     dados_votos = f"Tião do Gás: {resultados['Tião do gás']}, Zé da Feira: {
-        resultados['Zé da feira']}, Branco: {resultados['Branco']}, nulo: {resultados['nulo']}"
+        resultados['Zé da feira']}, Branco: {resultados['Branco']}, Nulo: {resultados['Nulo']}, Total: {resultados['Total']}"
 
     # Aplica o XOR em cada caractere
     for char in dados_votos:
@@ -125,20 +125,21 @@ def funcao_principal():
         if novo_voto == "1":  # Se houver um novo votante
             voto_individual = voto()
             if voto_individual == '1':  # Registra voto para Tião
-                votos_tiao += 1
+                votos_tiao += 39
             if voto_individual == '2':  # Registra voto para Zé
-                votos_ze += 1
+                votos_ze += 61
             if voto_individual == '3':  # Registra voto branco
-                votos_branco += 1
+                votos_branco += 11
             if voto_individual!='1'and voto_individual!='2'and voto_individual!='3':
-                votos_nulo += 1
+                votos_nulo += 8
+            votos_totais=votos_tiao+votos_ze+votos_branco+votos_nulo
 
         elif novo_voto == "2":  # Encerrar secção
             print("Secção Encerrada")
 
             # Variável para armazenar os resultados
-            results = resultado(votos_tiao, votos_ze, votos_branco, votos_nulo)
-            
+            results = resultado(votos_tiao, votos_ze, votos_branco, votos_nulo, votos_totais)
+                      
             # Criptografando os resultados
             chave_criptografia = 12345
             votos_criptografados = criptografar_votos(results, chave_criptografia)
