@@ -1,12 +1,16 @@
 import os
 
 # Função para a contagem de votos
-def resultado(tiao, ze, branco):
-    candidatos = ["Tião do gás", "Zé da feira", "Branco"]
-    contagem = {candidatos[0]: tiao, candidatos[1]: ze, candidatos[2]: branco}
+
+
+def resultado(tiao, ze, branco, nulo, total):
+    candidatos = ["Tião do gás", "Zé da feira", "Branco", "Nulo", "Total"]
+    contagem = {candidatos[0]: tiao, candidatos[1]: ze, candidatos[2]                : branco, candidatos[3]: nulo, candidatos[4]: total}
     return contagem
 
 # Função para confirmar voto assim como o BOTÃO VERDE na urna
+
+
 def confirmacao():
     confirma = input("Digite \"c\" para confirmar o voto: ")
     if confirma == "c":
@@ -20,6 +24,8 @@ def confirmacao():
     return confirma
 
 # Função que simula UM voto
+
+
 def voto():
     # Função do voto continuará enquanto a variável for True:
     voto_aberto = True
@@ -64,11 +70,13 @@ def voto():
     return voto_registrado
 
 # Função para criptografar os votos usando XOR
+
+
 def criptografar_votos(resultados, chave):
     votos_criptografados = ""
     # Converte os resultados dos votos em uma string
     dados_votos = f"Tião do Gás: {resultados['Tião do gás']}, Zé da Feira: {
-        resultados['Zé da feira']}, Branco: {resultados['Branco']}"
+        resultados['Zé da feira']}, Branco: {resultados['Branco']}, Nulo: {resultados['Nulo']}, Total: {resultados['Total']}"
 
     # Aplica o XOR em cada caractere
     for char in dados_votos:
@@ -76,6 +84,8 @@ def criptografar_votos(resultados, chave):
     return votos_criptografados
 
 # Função para gerar um hash usando o sistema de randomização do os
+
+
 def gerar_os_hash(dados):
     hash_valor = 0
     for char in dados:
@@ -83,9 +93,12 @@ def gerar_os_hash(dados):
         hash_valor = (hash_valor + ord(char) + os.getpid()) % 256
         hash_valor = (hash_valor << 1) | (
             hash_valor >> 7)  # Faz uma rotação de bits
-    return hex(hash_valor)  # Retorna o valor como uma string hexadecimal
+    return hex(hash_valor)
+    # Retorna o valor como uma string hexadecimal
 
 # Função para salvar os dados criptografados e o hash em um arquivo
+
+
 def salvar_arquivo(votos_criptografados, hash_valor):
     try:
         with open("votos_criptografados.txt", "w", encoding="utf-8") as arquivo:
@@ -98,6 +111,8 @@ def salvar_arquivo(votos_criptografados, hash_valor):
         print(f"Erro ao salvar o arquivo: {e}")
 
 # Função principal
+
+
 def funcao_principal():
     seccao_aberta = True  # A secção continuará enquanto a variável for True
 
@@ -105,6 +120,7 @@ def funcao_principal():
     votos_tiao = 0
     votos_ze = 0
     votos_branco = 0
+    votos_nulo = 0
 
     # Variável que vai conter o resultado das eleições (pré-criptografia)
     results = ""
@@ -128,16 +144,21 @@ def funcao_principal():
                 votos_ze += 1
             if voto_individual == '3':  # Registra voto branco
                 votos_branco += 1
+            if voto_individual != '1' and voto_individual != '2' and voto_individual != '3':
+                votos_nulo += 1
+            votos_totais = votos_tiao+votos_ze+votos_branco+votos_nulo
 
         elif novo_voto == "2":  # Encerrar secção
             print("Secção Encerrada")
 
             # Variável para armazenar os resultados
-            results = resultado(votos_tiao, votos_ze, votos_branco)
+            results = resultado(votos_tiao, votos_ze,
+                                votos_branco, votos_nulo, votos_totais)
 
             # Criptografando os resultados
             chave_criptografia = 12345
-            votos_criptografados = criptografar_votos(results, chave_criptografia)
+            votos_criptografados = criptografar_votos(
+                results, chave_criptografia)
             print("Votos criptografados:", votos_criptografados)
 
             # Gerando o hash dos votos criptografados
