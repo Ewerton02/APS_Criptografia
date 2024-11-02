@@ -5,7 +5,11 @@ import os
 
 def resultado(tiao, ze, branco, nulo, total):
     candidatos = ["Tião do gás", "Zé da feira", "Branco", "Nulo", "Total"]
-    contagem = {candidatos[0]: tiao, candidatos[1]: ze, candidatos[2]                : branco, candidatos[3]: nulo, candidatos[4]: total}
+    contagem = {candidatos[0]: tiao,
+                candidatos[1]: ze,
+                candidatos[2]: branco,
+                candidatos[3]: nulo,
+                candidatos[4]: total}
     return contagem
 
 # Função para confirmar voto assim como o BOTÃO VERDE na urna
@@ -75,8 +79,13 @@ def voto():
 def criptografar_votos(resultados, chave):
     votos_criptografados = ""
     # Converte os resultados dos votos em uma string
-    dados_votos = f"Tião do Gás: {resultados['Tião do gás']}, Zé da Feira: {
-        resultados['Zé da feira']}, Branco: {resultados['Branco']}, Nulo: {resultados['Nulo']}, Total: {resultados['Total']}"
+    dados_votos = (
+        f"Tião do Gás: {resultados['Tião do gás']}, "
+        f"Zé da Feira: {resultados['Zé da feira']}, "
+        f"Branco: {resultados['Branco']}, "
+        f"Nulo: {resultados['Nulo']}, "
+        f"Total: {resultados['Total']}"
+    )
 
     # Aplica o XOR em cada caractere
     for char in dados_votos:
@@ -88,11 +97,16 @@ def criptografar_votos(resultados, chave):
 
 def gerar_os_hash(dados):
     hash_valor = 0
+    pid = os.getpid()
     for char in dados:
         # Usa o PID para adicionar randomização
-        hash_valor = (hash_valor + ord(char) + os.getpid()) % 256
+        hash_valor = (hash_valor + ord(char) + pid) % 256
         hash_valor = (hash_valor << 1) | (
             hash_valor >> 7)  # Faz uma rotação de bits
+
+    with open('validacao.txt', 'w', encoding='utf-8') as file:
+        file.write(f"PID: {pid}\n")
+
     return hex(hash_valor)
     # Retorna o valor como uma string hexadecimal
 
@@ -123,7 +137,7 @@ def funcao_principal():
     votos_nulo = 0
 
     # Variável que vai conter o resultado das eleições (pré-criptografia)
-    results = ""
+    votos_totais = ""
 
     # Iniciando a votação:
     print("-=-" * 8)
@@ -167,8 +181,6 @@ def funcao_principal():
 
             # Salvando os dados criptografados e o hash no arquivo
             salvar_arquivo(votos_criptografados, hash_valor)
-            print(
-                "Dados criptografados e hash salvos no arquivo 'votos_criptografados.txt'.")
 
             seccao_aberta = False  # Fim da secção
 
