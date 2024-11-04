@@ -1,16 +1,16 @@
 import os
 
 # Função para a contagem de votos
-
-
 def resultado(tiao, ze, branco, nulo, total):
     candidatos = ["Tião do gás", "Zé da feira", "Branco", "Nulo", "Total"]
-    contagem = {candidatos[0]: tiao, candidatos[1]: ze, candidatos[2]                : branco, candidatos[3]: nulo, candidatos[4]: total}
+    contagem = {candidatos[0]: tiao,
+                candidatos[1]: ze,
+                candidatos[2]: branco,
+                candidatos[3]: nulo,
+                candidatos[4]: total}
     return contagem
 
 # Função para confirmar voto assim como o BOTÃO VERDE na urna
-
-
 def confirmacao():
     confirma = input("Digite \"c\" para confirmar o voto: ")
     if confirma == "c":
@@ -24,13 +24,10 @@ def confirmacao():
     return confirma
 
 # Função que simula UM voto
-
-
 def voto():
-    # Função do voto continuará enquanto a variável for True:
     voto_aberto = True
     voto_registrado = ""
-    while voto_aberto:  # Mostra as opções de candidatos
+    while voto_aberto:
         print("\n" + "-=-" * 8)
         print("Opções de Voto:")
         print("-=-" * 8)
@@ -41,7 +38,6 @@ def voto():
         voto_registrado = input("Digite sua opção de voto: ").strip()
         print("-=-" * 8)
 
-        # Cria as condições para cada voto e chama a função 'confirmacao()'
         if voto_registrado == '1':
             print("Você votou no Tião do Gás")
             if confirmacao() == "c":
@@ -70,108 +66,115 @@ def voto():
     return voto_registrado
 
 # Função para criptografar os votos usando XOR
-
-
 def criptografar_votos(resultados, chave):
     votos_criptografados = ""
-    # Converte os resultados dos votos em uma string
-    dados_votos = f"Tião do Gás: {resultados['Tião do gás']}, Zé da Feira: {
-        resultados['Zé da feira']}, Branco: {resultados['Branco']}, Nulo: {resultados['Nulo']}, Total: {resultados['Total']}"
+    dados_votos = (
+        f"Tião do Gás: {resultados['Tião do gás']}, "
+        f"Zé da Feira: {resultados['Zé da feira']}, "
+        f"Branco: {resultados['Branco']}, "
+        f"Nulo: {resultados['Nulo']}, "
+        f"Total: {resultados['Total']}"
+    )
 
-    # Aplica o XOR em cada caractere
     for char in dados_votos:
         votos_criptografados += chr(ord(char) ^ chave)
     return votos_criptografados
 
-# Função para gerar um hash usando o sistema de randomização do os
-
-
-def gerar_os_hash(dados):
+# Função para gerar um hash usando o PID do processo
+def gerar_os_hash(dados, pid):
     hash_valor = 0
     for char in dados:
-        # Usa o PID para adicionar randomização
-        hash_valor = (hash_valor + ord(char) + os.getpid()) % 256
-        hash_valor = (hash_valor << 1) | (
-            hash_valor >> 7)  # Faz uma rotação de bits
+        hash_valor = (hash_valor + ord(char) + pid) % 256
+        hash_valor = (hash_valor << 1) | (hash_valor >> 7)
     return hex(hash_valor)
-    # Retorna o valor como uma string hexadecimal
 
-# Função para salvar os dados criptografados e o hash em um arquivo
-
-
-def salvar_arquivo(votos_criptografados, hash_valor):
+# Função para salvar os dados criptografados, hash e PID em um arquivo
+def salvar_arquivo(votos_criptografados, hash_valor, pid):
     try:
         with open("votos_criptografados.txt", "w", encoding="utf-8") as arquivo:
-            # Salvando os votos criptografados
             arquivo.write(votos_criptografados + "\n")
-            # Salvando o hash gerado
             arquivo.write(f"Hash: {hash_valor}\n")
+            arquivo.write(f"PID: {pid}\n")
         print("Dados criptografados e hash salvos no arquivo 'votos_criptografados.txt'.")
     except Exception as e:
         print(f"Erro ao salvar o arquivo: {e}")
 
-# Função principal
-
-
+# Função principal de votação e criptografia
 def funcao_principal():
-    seccao_aberta = True  # A secção continuará enquanto a variável for True
+    seccao_aberta = True
+    votos_tiao = votos_ze = votos_branco = votos_nulo = 0
 
-    # A urna começa com 0 votos para todos os candidatos
-    votos_tiao = 0
-    votos_ze = 0
-    votos_branco = 0
-    votos_nulo = 0
-
-    # Variável que vai conter o resultado das eleições (pré-criptografia)
-    results = ""
-
-    # Iniciando a votação:
     print("-=-" * 8)
     print("Iniciando Votação")
 
-    while seccao_aberta:  # Validação do mesário se terá um novo votante ou secção encerrada
+    while seccao_aberta:
         print("-=-" * 8)
         print("1 - Novo Votante")
         print("2 - Encerrar Secção")
         print("-=-" * 8)
         novo_voto = input("\n")
 
-        if novo_voto == "1":  # Se houver um novo votante
+        if novo_voto == "1":
             voto_individual = voto()
-            if voto_individual == '1':  # Registra voto para Tião
+            if voto_individual == '1':
                 votos_tiao += 1
-            if voto_individual == '2':  # Registra voto para Zé
+            elif voto_individual == '2':
                 votos_ze += 1
-            if voto_individual == '3':  # Registra voto branco
+            elif voto_individual == '3':
                 votos_branco += 1
-            if voto_individual != '1' and voto_individual != '2' and voto_individual != '3':
+            else:
                 votos_nulo += 1
-            votos_totais = votos_tiao+votos_ze+votos_branco+votos_nulo
+            votos_totais = votos_tiao + votos_ze + votos_branco + votos_nulo
 
-        elif novo_voto == "2":  # Encerrar secção
+        elif novo_voto == "2":
             print("Secção Encerrada")
 
-            # Variável para armazenar os resultados
-            results = resultado(votos_tiao, votos_ze,
-                                votos_branco, votos_nulo, votos_totais)
-
-            # Criptografando os resultados
+            results = resultado(votos_tiao, votos_ze, votos_branco, votos_nulo, votos_totais)
             chave_criptografia = 12345
-            votos_criptografados = criptografar_votos(
-                results, chave_criptografia)
-            print("Votos criptografados:", votos_criptografados)
+            votos_criptografados = criptografar_votos(results, chave_criptografia)
+            pid = os.getpid()
+            hash_valor = gerar_os_hash(votos_criptografados, pid)
 
-            # Gerando o hash dos votos criptografados
-            hash_valor = gerar_os_hash(votos_criptografados)
-            print("Hash gerado:", hash_valor)
+            salvar_arquivo(votos_criptografados, hash_valor, pid)
+            seccao_aberta = False
 
-            # Salvando os dados criptografados e o hash no arquivo
-            salvar_arquivo(votos_criptografados, hash_valor)
-            print(
-                "Dados criptografados e hash salvos no arquivo 'votos_criptografados.txt'.")
+# Função para descriptografar e validar os votos
+def descriptografar_e_validar(arquivo_votos, chave=12345):
+    try:
+        with open(arquivo_votos, 'r', encoding='utf-8') as file:
+            dados_votos = file.readline().strip()
+            hash_arquivo = file.readline().replace("Hash: ", "").strip()
+            pid_arquivo = int(file.readline().replace("PID: ", "").strip())
 
-            seccao_aberta = False  # Fim da secção
+        dados_descriptografados = ""
+        for char in dados_votos:
+            dados_descriptografados += chr(ord(char) ^ chave)
 
+        hash_calculado = gerar_os_hash(dados_votos, pid_arquivo)
+        if hash_calculado == hash_arquivo:
+            print("Arquivo verificado com sucesso. Hash corresponde.")
+            print("Votos descriptografados:", dados_descriptografados)
+        else:
+            print("Erro: Hash não corresponde. Arquivo pode estar corrompido.")
+    except FileNotFoundError:
+        print(f"Erro: O arquivo '{arquivo_votos}' não foi encontrado.")
+    except Exception as e:
+        print(f"Ocorreu um erro: {e}")
 
-# Chamada da função principal
-funcao_principal()
+# Menu de opções
+def main():
+    print("Escolha uma opção:")
+    print("1 - Iniciar votação")
+    print("2 - Descriptografar e validar resultados")
+    opcao = input("Opção: ")
+
+    if opcao == "1":
+        funcao_principal()
+    elif opcao == "2":
+        nome_arquivo = input("Digite o nome do arquivo para descriptografar (ex: votos_criptografados.txt): ")
+        descriptografar_e_validar(nome_arquivo)
+    else:
+        print("Opção inválida.")
+
+if __name__ == "__main__":
+    main()
